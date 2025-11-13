@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -23,13 +26,20 @@
         --dark-color: #000;
       }
 
+      html {
+        overflow-x: hidden;
+      }
+
       body {
         display: flex;
         align-items: flex-end;
         justify-content: center;
         min-height: 100vh;
+        min-height: 100dvh; /* mobile dynamic viewport to avoid bounce space */
         background-color: var(--dark-color);
-        overflow: hidden;
+        overflow-x: hidden; /* prevent horizontal panning */
+        overscroll-behavior-x: none;
+        touch-action: pan-y pinch-zoom; /* allow vertical scroll/zoom, block horizontal pan */
         perspective: 1000px;
         font-family: "Quicksand", serif;
         font-optical-sizing: auto;
@@ -74,11 +84,10 @@
 
       .night {
         position: fixed;
-        left: 50%;
-        top: 0;
-        transform: translateX(-50%);
-        width: 120vw; /* overscan to avoid empty strip on edges */
-        height: 100%;
+        inset: 0; /* cover full viewport */
+        width: 100vw;
+        height: 100vh; /* fallback */
+        height: 100dvh; /* mobile dynamic viewport */
         filter: blur(0.1vmin);
         background-image: radial-gradient(
             ellipse at top,
@@ -118,7 +127,11 @@
       .moon-wrap {
         position: fixed;
         top: 3vmin;
-        right: 3vmin; /* sit closer to the extreme top-right corner */
+        right: 3vmin; /* default */
+        top: calc(3vmin + env(safe-area-inset-top));
+        right: calc(
+          3vmin + env(safe-area-inset-right)
+        ); /* respect notches/safe areas on mobile */
         width: 14vmin;
         height: 14vmin;
         z-index: 50;
@@ -1457,11 +1470,9 @@
       /* bubbles (stars) overlay */
       .bubbles {
         position: fixed;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
+        inset: 0;
         height: 100%;
-        width: 120vw; /* match night overscan so stars also appear at extreme edges */
+        width: 100vw;
         pointer-events: none;
         z-index: 200;
       }
@@ -2488,9 +2499,12 @@
           if (!isFinite(minLeft) || !isFinite(maxRight)) return;
           centerX = (minLeft + maxRight) / 2;
         }
-        const targetX = window.innerWidth / 2;
+        const viewportW =
+          (window.visualViewport && window.visualViewport.width) ||
+          window.innerWidth;
+        const targetX = Math.round(viewportW / 2);
         const shift = targetX - centerX;
-        flowers.style.setProperty("--flowers-shift", shift + "px");
+        flowers.style.setProperty("--flowers-shift", Math.round(shift) + "px");
       }
 
       // Compute and aim moonbeam so it shines onto the flowers
@@ -2554,6 +2568,9 @@
 
         window.addEventListener("resize", onResize);
         window.addEventListener("orientationchange", onResize);
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener("resize", onResize);
+        }
         // Re-aim on visibility changes (mobile/browser tabs)
         document.addEventListener("visibilitychange", () => {
           if (!document.hidden) {
