@@ -1910,6 +1910,145 @@
       .flower__g-long {
         --c: #caa43a !important;
       }
+      /* ================= Fireflies & Shooting Stars ================= */
+      .fireflies {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100dvh;
+        pointer-events: none;
+        z-index: 120; /* above plants, below bubbles & moon */
+        overflow: visible;
+      }
+      .firefly {
+        position: absolute;
+        width: 0.9vmin;
+        height: 0.9vmin;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 30% 30%,
+          #fff8c4 0%,
+          #ffd84d 65%,
+          rgba(255, 215, 80, 0) 70%
+        );
+        box-shadow: 0 0 0.7vmin rgba(255, 230, 140, 0.9),
+          0 0 1.8vmin rgba(255, 215, 80, 0.55);
+        filter: blur(0.12vmin);
+        opacity: 0.1;
+        animation: firefly-flicker 3.4s var(--flicker-delay, 0s) ease-in-out
+            infinite,
+          firefly-drift var(--drift-dur, 10s) linear alternate infinite;
+        transform: translate(0, 0);
+      }
+      @keyframes firefly-flicker {
+        0%,
+        100% {
+          opacity: 0.15;
+          transform: scale(0.7);
+        }
+        45% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        70% {
+          opacity: 0.5;
+        }
+      }
+      @keyframes firefly-drift {
+        0% {
+          transform: translate(0, 0);
+        }
+        100% {
+          transform: translate(var(--dx), var(--dy));
+        }
+      }
+      .sky-effects {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 170; /* below bubbles but above fireflies */
+      }
+      .shooting-star {
+        position: fixed;
+        width: 0.65vmin;
+        height: 0.65vmin;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 40% 40%,
+          #fff 0%,
+          #ffeaa0 55%,
+          rgba(255, 240, 150, 0.25) 70%
+        );
+        box-shadow: 0 0 0.9vmin rgba(255, 240, 170, 0.95),
+          0 0 2.6vmin rgba(255, 220, 120, 0.55);
+        animation: shooting-path var(--dur, 2s) linear forwards;
+        opacity: 0;
+        mix-blend-mode: screen;
+      }
+      .shooting-star::after,
+      .shooting-star::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%) rotate(var(--angle));
+        left: calc(var(--tail-len, 260px) * -1);
+        height: var(--tail-thickness, 0.38vmin);
+        width: var(--tail-len, 260px);
+        pointer-events: none;
+      }
+      .shooting-star::after {
+        background: linear-gradient(
+          90deg,
+          rgba(255, 240, 170, 0),
+          rgba(255, 240, 170, 0.95)
+        );
+        filter: blur(0.28vmin);
+        animation: tail-glow var(--dur, 2s) linear forwards;
+        opacity: 0;
+      }
+      .shooting-star::before {
+        background: linear-gradient(
+          90deg,
+          rgba(255, 240, 170, 0),
+          rgba(255, 240, 170, 0.4)
+        );
+        filter: blur(0.9vmin);
+        animation: tail-glow var(--dur, 2s) linear forwards;
+        opacity: 0;
+      }
+      @keyframes tail-glow {
+        0% {
+          opacity: 0;
+        }
+        8% {
+          opacity: 1;
+        }
+        70% {
+          opacity: 0.85;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+      @keyframes shooting-path {
+        0% {
+          opacity: 0;
+          transform: translate(0, 0) scale(0.9);
+        }
+        10% {
+          opacity: 1;
+        }
+        92% {
+          opacity: 1;
+          transform: translate(calc(var(--tx) * 0.92), calc(var(--ty) * 0.92))
+            scale(0.55);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(var(--tx), var(--ty)) scale(0.4);
+        }
+      }
     </style>
   </head>
   <body class="not-loaded">
@@ -2255,6 +2394,10 @@
         </div>
       </div>
     </div>
+    <!-- Fireflies around bouquet -->
+    <div class="fireflies"></div>
+    <!-- Occasional shooting stars -->
+    <div class="sky-effects"></div>
 
     <div class="bubbles">
       <div class="bubble">
@@ -2545,6 +2688,7 @@
         rafId = requestAnimationFrame(() => {
           centerFlowers();
           updateMoonBeam();
+          positionFireflies();
         });
       }
 
@@ -2553,6 +2697,8 @@
         requestAnimationFrame(() => {
           centerFlowers();
           updateMoonBeam();
+          spawnFireflies();
+          scheduleShootingStars();
         });
 
         // Start animations
@@ -2563,6 +2709,7 @@
           setTimeout(() => {
             centerFlowers();
             updateMoonBeam();
+            positionFireflies();
           }, 1200);
         }, 800);
 
@@ -2576,9 +2723,112 @@
           if (!document.hidden) {
             centerFlowers();
             updateMoonBeam();
+            positionFireflies();
           }
         });
       };
+
+      /* ================= Fireflies Logic ================= */
+      function spawnFireflies(count = 28) {
+        const container = document.querySelector(".fireflies");
+        if (!container) return;
+        container.innerHTML = ""; // reset for idempotency
+        for (let i = 0; i < count; i++) {
+          const f = document.createElement("div");
+          f.className = "firefly";
+          f.style.setProperty(
+            "--flicker-delay",
+            (Math.random() * 4).toFixed(2) + "s"
+          );
+          f.style.setProperty(
+            "--drift-dur",
+            (6 + Math.random() * 12).toFixed(2) + "s"
+          );
+          f.style.setProperty(
+            "--dx",
+            (Math.random() < 0.5 ? -1 : 1) * (20 + Math.random() * 40) + "px"
+          );
+          f.style.setProperty(
+            "--dy",
+            (Math.random() < 0.5 ? -1 : 1) * (20 + Math.random() * 40) + "px"
+          );
+          container.appendChild(f);
+        }
+        positionFireflies();
+      }
+      function positionFireflies() {
+        const container = document.querySelector(".fireflies");
+        const anchors = document.querySelectorAll(".flower--2, .flower--3");
+        if (!container || anchors.length < 2) return;
+        let sum = 0;
+        anchors.forEach((a) => {
+          const r = a.getBoundingClientRect();
+          sum += r.left + r.width / 2;
+        });
+        const centerX = sum / anchors.length;
+        const rA = anchors[0].getBoundingClientRect();
+        const rB = anchors[1].getBoundingClientRect();
+        const centerY = (rA.top + rB.top) / 2 + rA.height * 0.35; // slightly below top so they orbit petals & leaves
+        const radius = Math.max(rA.width, rA.height, 160);
+        const vW =
+          (window.visualViewport && window.visualViewport.width) ||
+          window.innerWidth;
+        const vH =
+          (window.visualViewport && window.visualViewport.height) ||
+          window.innerHeight;
+        container.querySelectorAll(".firefly").forEach((f) => {
+          const angle = Math.random() * Math.PI * 2;
+          const dist = radius * 0.4 + Math.random() * radius * 0.6;
+          const x = centerX + Math.cos(angle) * dist;
+          const y = centerY + Math.sin(angle) * dist * 0.6; // squash vertical spread a bit
+          f.style.left = Math.min(Math.max(0, x), vW - 8) + "px";
+          f.style.top = Math.min(Math.max(0, y), vH - 8) + "px";
+        });
+      }
+
+      /* ================= Shooting Star Logic ================= */
+      function launchShootingStar() {
+        const sky = document.querySelector(".sky-effects");
+        if (!sky) return;
+        const star = document.createElement("div");
+        star.className = "shooting-star";
+        const vW =
+          (window.visualViewport && window.visualViewport.width) ||
+          window.innerWidth;
+        const vH =
+          (window.visualViewport && window.visualViewport.height) ||
+          window.innerHeight;
+        const startX = vW * (0.05 + Math.random() * 0.55);
+        const startY = vH * (0.04 + Math.random() * 0.18);
+        const travelX = vW * (0.5 + Math.random() * 0.35); // longer horizontal travel
+        const travelY = vH * (0.22 + Math.random() * 0.25); // longer vertical travel
+        star.style.left = startX + "px";
+        star.style.top = startY + "px";
+        star.style.setProperty("--tx", travelX + "px");
+        star.style.setProperty("--ty", travelY + "px");
+        const angleDeg = (Math.atan2(travelY, travelX) * 180) / Math.PI;
+        star.style.setProperty("--angle", angleDeg + "deg");
+        // Tail length proportional to travel distance for emphasis
+        const tailLen =
+          Math.sqrt(travelX * travelX + travelY * travelY) *
+          (0.55 + Math.random() * 0.25);
+        star.style.setProperty("--tail-len", tailLen.toFixed(0) + "px");
+        star.style.setProperty(
+          "--tail-thickness",
+          (0.22 + Math.random() * 0.25).toFixed(2) + "vmin"
+        );
+        const dur = 2.1 + Math.random() * 1.4; // slightly longer to appreciate tail
+        star.style.setProperty("--dur", dur.toFixed(2) + "s");
+        sky.appendChild(star);
+        star.addEventListener("animationend", () => star.remove());
+      }
+      function scheduleShootingStars() {
+        const next = 4000 + Math.random() * 5000; // 4s - 9s
+        setTimeout(() => {
+          launchShootingStar();
+          scheduleShootingStars();
+        }, next);
+      }
     </script>
   </body>
 </html>
