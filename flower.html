@@ -1686,8 +1686,8 @@
       @keyframes love-burst {
         50%,
         100% {
-          /* switch burst color to warm star yellow */
-          box-shadow: inset 0 0 0 0 rgb(255, 232, 124);
+          /* switch burst color to pink */
+          box-shadow: inset 0 0 0 0 rgb(255, 153, 204);
           transform: translate(0, 0) scale(1);
         }
       }
@@ -1696,7 +1696,7 @@
         opacity: 0;
         /* glowing star pulse */
         animation: star-glow 3s forwards infinite;
-        filter: drop-shadow(0 0 8px rgba(255, 232, 124, 0.85));
+        filter: drop-shadow(0 0 8px rgba(255, 153, 204, 0.85));
       }
       /* Stagger star rotations/delays mimic from the source via nth-child */
       .bubble:nth-child(1) .star {
@@ -1781,18 +1781,18 @@
       }
       @keyframes star-glow {
         50% {
-          /* warm star fill */
-          fill: rgb(255, 232, 124);
+          /* pink star fill */
+          fill: rgb(255, 153, 204);
           opacity: 1;
         }
       }
-      /* --- Pale yellow flower theme overrides --- */
+      /* --- Pink flower and white stem theme overrides --- */
       :root {
-        --flower-petal-light: #fff3b0; /* very light yellow */
-        --flower-petal-mid: #ffe27a; /* soft yellow */
-        --flower-petal-dark: #ffd24d; /* deeper yellow */
-        --flower-stem: #e8c65c; /* warm golden stem */
-        --flower-glow: #fff2a8; /* subtle glow */
+        --flower-petal-light: #ffb3d9; /* light pink */
+        --flower-petal-mid: #ff66b2; /* soft pink */
+        --flower-petal-dark: #cc0066; /* deeper pink */
+        --flower-stem: #ffffff; /* white stem */
+        --flower-glow: #ffcce6; /* pink glow */
       }
       /* petal glow above heads */
       .flower__leafs::after {
@@ -1817,7 +1817,7 @@
       }
       /* center highlight */
       .flower__white-circle {
-        background-color: #fff8cc !important;
+        background-color: #ffffff !important;
       }
       /* stems */
       .flower__line {
@@ -1827,45 +1827,45 @@
             transparent,
             rgba(255, 255, 255, 0.2)
           ),
-          linear-gradient(to top, transparent 10%, #b88b2a, var(--flower-stem)) !important;
+          linear-gradient(to top, transparent 10%, #ffffff, var(--flower-stem)) !important;
       }
       .flower__line__leaf {
         background-image: linear-gradient(
           to top,
-          rgba(184, 139, 42, 0.4),
+          rgba(255, 255, 255, 0.4),
           var(--flower-stem)
         ) !important;
       }
       /* floating sparkles on flowers */
       .flower__light {
-        background-color: #ffe680 !important;
+        background-color: #ffffff !important;
       }
       .flower__light:nth-child(odd) {
-        background-color: #ffec99 !important;
+        background-color: #ffffff !important;
       }
-      /* grasses turn warm yellow */
+      /* grasses turn white */
       .flower__grass {
-        --c: #d2b04f !important;
+        --c: #ffffff !important;
       }
       .flower__grass__leaf {
         background-image: linear-gradient(
           to top,
           transparent,
           transparent 30%,
-          #d2b04f
+          #ffffff
         ) !important;
       }
       /* long leaves and front/right leaves */
       .long-g .leaf {
-        --c: #d2b04f !important;
-        border-left-color: #d2b04f !important;
+        --c: #ffffff !important;
+        border-left-color: #ffffff !important;
       }
       .flower__g-right .leaf,
       .flower__g-fr .leaf {
-        border-left-color: #d2b04f !important;
+        border-left-color: #ffffff !important;
       }
       .flower__g-front__leaf {
-        box-shadow: inset 0 2px 1vmin rgba(255, 236, 153, 0.25) !important;
+        box-shadow: inset 0 2px 1vmin rgba(255, 255, 255, 0.25) !important;
         background-image: linear-gradient(
             to bottom left,
             transparent,
@@ -1873,13 +1873,13 @@
           ),
           linear-gradient(
             to bottom right,
-            #e8c65c 50%,
+            #ffffff 50%,
             transparent 50%,
             transparent
           ) !important;
       }
       .flower__g-fr__leaf {
-        box-shadow: inset 0 2px 1vmin rgba(255, 236, 153, 0.25) !important;
+        box-shadow: inset 0 2px 1vmin rgba(255, 255, 255, 0.25) !important;
         background-image: linear-gradient(
             to bottom left,
             transparent,
@@ -1887,7 +1887,7 @@
           ),
           linear-gradient(
             to bottom right,
-            #e8c65c 45%,
+            #ffffff 45%,
             transparent 50%,
             transparent
           ) !important;
@@ -1903,12 +1903,12 @@
         background-image: linear-gradient(
           to top,
           transparent,
-          #caa43a,
+          #ffffff,
           transparent 100%
         ) !important;
       }
       .flower__g-long {
-        --c: #caa43a !important;
+        --c: #ffffff !important;
       }
       /* ================= Fireflies & Shooting Stars ================= */
       .fireflies {
@@ -1928,12 +1928,12 @@
         border-radius: 50%;
         background: radial-gradient(
           circle at 30% 30%,
-          #fff8c4 0%,
-          #ffd84d 65%,
-          rgba(255, 215, 80, 0) 70%
+          #ffe6f2 0%,
+          #ff99cc 65%,
+          rgba(255, 153, 204, 0) 70%
         );
-        box-shadow: 0 0 0.7vmin rgba(255, 230, 140, 0.9),
-          0 0 1.8vmin rgba(255, 215, 80, 0.55);
+        box-shadow: 0 0 0.7vmin rgba(255, 153, 204, 0.9),
+          0 0 1.8vmin rgba(255, 102, 178, 0.55);
         filter: blur(0.12vmin);
         opacity: 0.1;
         animation: firefly-flicker 3.4s var(--flicker-delay, 0s) ease-in-out
@@ -1977,11 +1977,11 @@
         background: radial-gradient(
           circle at 40% 40%,
           #fff 0%,
-          #ffeaa0 55%,
-          rgba(255, 240, 150, 0.25) 70%
+          #ffffff 55%,
+          rgba(255, 255, 255, 0.25) 70%
         );
-        box-shadow: 0 0 0.9vmin rgba(255, 240, 170, 0.95),
-          0 0 2.6vmin rgba(255, 220, 120, 0.55);
+        box-shadow: 0 0 0.9vmin rgba(255, 255, 255, 0.95),
+          0 0 2.6vmin rgba(255, 255, 255, 0.55);
         animation: shooting-path var(--dur, 2s) linear forwards;
         opacity: 0;
         mix-blend-mode: screen;
@@ -2000,8 +2000,8 @@
       .shooting-star::after {
         background: linear-gradient(
           90deg,
-          rgba(255, 240, 170, 0),
-          rgba(255, 240, 170, 0.95)
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 0.95)
         );
         filter: blur(0.28vmin);
         animation: tail-glow var(--dur, 2s) linear forwards;
@@ -2010,8 +2010,8 @@
       .shooting-star::before {
         background: linear-gradient(
           90deg,
-          rgba(255, 240, 170, 0),
-          rgba(255, 240, 170, 0.4)
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 0.4)
         );
         filter: blur(0.9vmin);
         animation: tail-glow var(--dur, 2s) linear forwards;
